@@ -1,0 +1,243 @@
+Python Script Used in Power BI
+
+Data Filed Measures:
+
+1. Top 5 Countries Sales by Yearly 
+
+import pandas as pd
+
+df = pd.read_csv('D:\\Project - Analyzing Amazon Sales Data\\Transformed_Amazon_Sales_data.csv')
+
+sales_by_top_5country_df = df.groupby(['country', 'year', 'region', 'order_priority']).agg(
+    total_sales=('total_revenue', 'sum')
+).reset_index()
+
+sales_by_top_5country_df.columns = ['Country', 'Year', 'Region', 'Order Priority', 'Total Sales']
+
+sales_by_top_5country_df
+
+2. Unit Sold By Items
+
+import pandas as pd
+
+df = pd.read_csv('D:\\Project - Analyzing Amazon Sales Data\\Transformed_Amazon_Sales_data.csv')
+
+ units_sold_itemtype_df = df.groupby(['item_type', 'year', 'region', 'order_priority']).agg(
+    units_sold=('units_sold', 'sum')
+).reset_index()
+
+units_sold_itemstype_df.columns = ['item_type', 'year', 'region', 'order_priority', 'units_sold']
+
+units_sold_itemstype_df
+
+3. Average Sales & Cost by Items
+
+import pandas as pd
+
+df = pd.read_csv('D:\\Project - Analyzing Amazon Sales Data\\Transformed_Amazon_Sales_data.csv')
+
+avg_cost_sales_df = df.groupby(['item_type', 'year', 'region', 'order_priority']).agg(
+    avg_cost=('total_cost', 'mean'),
+    avg_sales=('total_revenue', 'mean')
+).reset_index()
+
+avg_cost_sales_df.columns = ['Item_type', 'Year', 'Region', 'Order Priority', 'Avg Cost', 'Avg Sales']
+
+avg_cost_sales_df
+
+4. Top 5 Countries Sales by Yearly 
+import pandas as pd
+
+df = pd.read_csv('D:\\Project - Analyzing Amazon Sales Data\\Transformed_Amazon_Sales_data.csv')
+
+sales_by_top_5country_df = df.groupby(['country', 'year', 'region', 'order_priority']).agg(
+    total_sales=('total_revenue', 'sum')
+).reset_index()
+
+sales_by_top_5country_df.columns = ['Country', 'Year', 'Region', 'Order Priority', 'Total Sales']
+
+sales_by_top_5country_df
+
+
+5. Average Sales & Cost by Items 
+
+import pandas as pd
+
+df = pd.read_csv('D:\\Project - Analyzing Amazon Sales Data\\Transformed_Amazon_Sales_data.csv')
+
+grouped_data = df.groupby(['year', 'region', 'order_priority', 'item_type']).agg({
+    'total_revenue': 'sum',
+    'total_cost': 'sum',
+    'units_sold': 'sum'
+}).reset_index()
+
+grouped_data['average_sales'] = grouped_data['total_revenue'] / grouped_data['units_sold']
+grouped_data['average_cost'] = grouped_data['total_cost'] / grouped_data['units_sold']
+
+avg_cost_sales_df= grouped_data[['year', 'region', 'order_priority', 'item_type', 'average_sales', 'average_cost']]
+
+avg_cost_sales_df
+
+6. Total Sales & Profit by Month
+
+import pandas as pd
+
+df = pd.read_csv('D:\\Project - Analyzing Amazon Sales Data\\Transformed_Amazon_Sales_data.csv')
+
+monthly_sales_profit_year_df = df.groupby(['month', 'year', 'region', 'order_priority']).agg(
+    total_sales=('total_revenue', 'sum'),
+    total_profit=('total_profit', 'sum')
+).reset_index()
+
+monthly_sales_profit_year_df.columns = ['Month', 'Year', 'Region', 'Order Priority', 'Total Sales', 'Total Profit']
+
+monthly_sales_profit_year_df
+
+7. AOV Year-wise sales (Total Order Value of all year to be shown)
+
+# Calculate 'Order Value' per row (Units Sold * Unit Price)
+df['order_value'] = df['units_sold'] * df['unit_price']
+
+yearly_orders = df.groupby(['year', 'order_id']).agg(
+    total_order_value=('order_value', 'sum')
+).reset_index()
+
+yearly_aov_df = yearly_orders.groupby('year').agg(
+    total_order_value=('total_order_value', 'sum'),
+    total_orders=('order_id', 'nunique')
+).reset_index()
+
+# Calculate Average Order Value (AOV) for each year
+yearly_aov_df['average_order_value'] = yearly_aov_df['total_order_value'] / yearly_aov_df['total_orders']
+
+# Select relevant columns for Power BI output
+total_order_value_by_year_order_id_df = yearly_aov_df[['year', 'average_order_value']]
+
+# Rename columns for better readability
+total_order_value_by_year_order_id_df.columns = ['Year', 'Average_Order_Value']
+
+# Return the result to Power BI
+total_order_value_by_year_order_id_df
+
+
+
+
+8. Monthly Sales Trend
+
+import pandas as pd
+
+df = pd.read_csv('D:\\Project - Analyzing Amazon Sales Data\\Transformed_Amazon_Sales_data.csv')
+
+# Group by month to get total sales for each month
+monthly_salestrend_df = data.groupby('month').agg({
+    'total_revenue': 'sum'
+}).reset_index()
+
+monthly_salestrend_df= monthly_sales[['month', 'total_revenue']]
+
+monthly_salestrend_df
+
+9. Yearly-Month Sales Trend
+
+import pandas as pd
+
+df = pd.read_csv('D:\\Project - Analyzing Amazon Sales Data\\Transformed_Amazon_Sales_data.csv')
+
+yearly_month_sales = df.groupby(['year', 'month']).agg({
+    'total_revenue': 'sum'
+}).reset_index()
+
+pivot_sales = yearly_month_sales.pivot(index='year', columns='month', values='total_revenue')
+
+# Replace NaN values with 0
+pivot_sales.fillna(0, inplace=True)
+
+pivot_sales.columns = [pd.to_datetime(str(month), format='%m').strftime('%b') for month in pivot_sales.columns]
+
+pivot_sales.reset_index(inplace=True)
+
+year_month_salestrend_df = pivot_sales
+
+year_month_salestrend_df
+
+10. Profit Margin 
+
+import pandas as pd
+
+df = pd.read_csv('D:\\Project - Analyzing Amazon Sales Data\\Transformed_Amazon_Sales_data.csv')
+
+profit_margin_df = df.groupby(['year', 'region']).agg(
+    total_sales=('total_revenue', 'sum'),
+    total_profit=('total_profit', 'sum')
+).reset_index()
+
+profit_margin_df['profit_margin'] = (profit_margin_df['total_profit'] / profit_margin_df['total_sales']) * 100
+
+profit_margin_df = profit_margin_df[['year', 'profit_margin']]
+
+profit_margin_df.columns = ['Year', 'Profit Margin']
+
+profit_margin_df
+
+11. Total Profit by Item Type 
+
+profit_by_itemstype_df = df.groupby(['item_type', 'year', 'region']).agg(
+    total_profit=('total_profit', 'sum')
+).reset_index()
+
+profit_by_itemstype_df.columns = ['Item Type', 'Year', 'Region', 'Total Profit']
+
+profit_by_itemstype_df
+
+12. Total Profit by Country and Region
+
+import pandas as pd
+
+df = pd.read_csv('D:\\Project - Analyzing Amazon Sales Data\\Transformed_Amazon_Sales_data.csv')
+
+total_profit_by_country_region_df = df.groupby(['year', 'country', 'region']).agg(
+    total_profit=('total_profit', 'sum')
+).reset_index()
+
+profit_by_country_region_df = total_profit_by_country_region_df[['year', 'country', 'region', 'total_profit']]
+
+profit_by_country_region_df.columns = ['Year', 'Country', 'Region', 'Total_Profit']
+
+profit_by_country_region_df
+
+13. Profit YTD and Total Profit by Year
+
+total_profit_year_ytd_df = df.groupby(['region', 'year']).agg(
+    total_profit=('total_profit', 'sum')
+).reset_index()
+
+total_profit_year_ytd_df = profit_df.sort_values(by=['region', 'year'])
+
+total_profit_year_ytd_df ['profit_YTD'] = profit_df.groupby('region')['total_profit'].cumsum()
+
+total_profit_year_ytd_df.columns = ['Region', 'Year', 'Total Profit', 'Profit YTD']
+
+total_profit_year_ytd_df
+
+14. Total Profit by Sales Channel
+
+profit_by_sales_channel_df = df.groupby(['sales_channel', 'year', 'region']).agg(
+    total_profit=('total_profit', 'sum')
+).reset_index()
+
+profit_by_sales_channel_df.columns = ['Sales Channel', 'Year', 'Region', 'Total Profit']
+
+profit_by_sales_channel_df
+
+15. Units Sold by Sales Channel 
+
+units_sold_by_sales_channel_df = df.groupby(['sales_channel', 'year', 'region']).agg(
+    total_units_sold=('units_sold', 'sum')
+).reset_index()
+
+units_sold_by_sales_channel_df.columns = ['Sales Channel', 'Year', 'Region', 'Total Units Sold']
+
+units_sold_by_sales_channel_df
+
+
+
